@@ -202,6 +202,11 @@
     "viewsContainers": {
       "activitybar": [
         {
+          "id": "collab",
+          "title": "Collab",
+          "icon": "resources/collab.png"
+        },
+        {
           "id": "cody",
           "title": "Cody",
           "icon": "resources/cody.svg"
@@ -227,6 +232,11 @@
           "when": "cody.activated"
         },
         {
+          "id": "cody.collaborate_chat.tree.view",
+          "name": "Collaborate Chat",
+          "when": "cody.activated"
+        },
+        {
           "type": "webview",
           "id": "cody.search",
           "name": "Natural Language Search (Experimental)",
@@ -237,6 +247,18 @@
           "id": "cody.support.tree.view",
           "name": "Settings & Support",
           "when": "cody.activated"
+        }
+      ],
+      "collab": [
+        {
+          "type": "webview",
+          "id": "collab.chat",
+          "name": "Collab Group Chat"
+        },
+        {
+          "type": "webview",
+          "id": "collab.active.user",
+          "name": "Active users"
         }
       ]
     },

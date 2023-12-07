@@ -190,6 +190,26 @@ const register = async (
         vscode.window.registerWebviewViewProvider('cody.chat', chatManager.sidebarChat, {
             webviewOptions: { retainContextWhenHidden: true },
         }),
+        vscode.window.registerWebviewViewProvider('collab.chat', {
+            resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext<unknown>, token: vscode.CancellationToken) {
+                webviewView.webview.options = {
+                    enableScripts: true
+                }
+                webviewView.webview.html = "<!doctype html><html>"
+            }
+        }, {
+            webviewOptions: { retainContextWhenHidden: true },
+        }),
+        vscode.window.registerWebviewViewProvider('collab.active.user', {
+            resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext<unknown>, token: vscode.CancellationToken) {
+                webviewView.webview.options = {
+                    enableScripts: true
+                }
+                webviewView.webview.html = "<!doctype html><html>"
+            }
+        }, {
+            webviewOptions: { retainContextWhenHidden: true },
+        }),
         // Update external services when configurationChangeEvent is fired by chatProvider
         contextProvider.configurationChangeEvent.event(async () => {
             const newConfig = await getFullConfig()
@@ -197,6 +217,18 @@ const register = async (
             await configureEventsInfra(newConfig, isExtensionModeDevOrTest)
         })
     )
+
+
+    if (symfRunner) {
+        const searchViewProvider = new SearchViewProvider(context.extensionUri, symfRunner)
+        searchViewProvider.initialize()
+        disposables.push(searchViewProvider)
+        disposables.push(
+            vscode.window.registerWebviewViewProvider('cody.search', searchViewProvider, {
+                webviewOptions: { retainContextWhenHidden: true },
+            })
+        )
+    }
 
     if (symfRunner) {
         const searchViewProvider = new SearchViewProvider(context.extensionUri, symfRunner)

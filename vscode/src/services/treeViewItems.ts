@@ -32,7 +32,7 @@ export function getCodyTreeItems(type: CodyTreeItemType): CodySidebarTreeItem[] 
         case 'support':
             return supportItems
         default:
-            return []
+            return commandsItems
     }
 }
 
@@ -120,6 +120,12 @@ const commandsItems: CodySidebarTreeItem[] = [
         title: 'Chat',
         icon: 'comment',
         description: 'Ask Cody a question',
+        command: { command: 'cody.chat.panel.new' },
+    },
+    {
+        title: 'Team Chat',
+        icon: 'comment',
+        description: 'Connect and collaborate online with secure messaging',
         command: { command: 'cody.chat.panel.new' },
     },
     {
