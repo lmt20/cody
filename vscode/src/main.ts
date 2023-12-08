@@ -44,6 +44,10 @@ import { createOrUpdateTelemetryRecorderProvider, telemetryRecorder } from './se
 import { workspaceActionsOnConfigChange } from './services/utils/workspace-action'
 import { TestSupport } from './test-support'
 import { parseAllVisibleDocuments, updateParseTreeOnEdit } from './tree-sitter/parse-tree-cache'
+import { ColorsViewProvider } from './collab/webview-providers/ColorsViewProvider'
+import { ViewGroupsProvider } from './collab/webview-providers/ViewGroupsProvider'
+import { DirectMessageProvider } from './collab/webview-providers/DirectMessageProvider'
+import { StreamProvider } from './collab/webview-providers/StreamProvider'
 
 /**
  * Start the extension, watching all relevant configuration and secrets for changes.
@@ -184,30 +188,28 @@ const register = async (
 
     disposables.push(new CodeActionProvider({ contextProvider }))
 
+    const colorsViewProvider = new ColorsViewProvider(context.extensionUri)
+    const viewGroupProvider = new ViewGroupsProvider(context.extensionUri)
+    const directMessageProvider = new DirectMessageProvider(context.extensionUri)
+    const streamProvider = new StreamProvider(context.extensionUri)
+
     // Register tree views
     disposables.push(
         chatManager,
         vscode.window.registerWebviewViewProvider('cody.chat', chatManager.sidebarChat, {
             webviewOptions: { retainContextWhenHidden: true },
         }),
-        vscode.window.registerWebviewViewProvider('collab.chat', {
-            resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext<unknown>, token: vscode.CancellationToken) {
-                webviewView.webview.options = {
-                    enableScripts: true
-                }
-                webviewView.webview.html = "<!doctype html><html>"
-            }
-        }, {
+
+        vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, colorsViewProvider, {
             webviewOptions: { retainContextWhenHidden: true },
         }),
-        vscode.window.registerWebviewViewProvider('collab.active.user', {
-            resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext<unknown>, token: vscode.CancellationToken) {
-                webviewView.webview.options = {
-                    enableScripts: true
-                }
-                webviewView.webview.html = "<!doctype html><html>"
-            }
-        }, {
+        vscode.window.registerWebviewViewProvider(ViewGroupsProvider.viewType, viewGroupProvider, {
+            webviewOptions: { retainContextWhenHidden: true },
+        }),
+        vscode.window.registerWebviewViewProvider(DirectMessageProvider.viewType, directMessageProvider, {
+            webviewOptions: { retainContextWhenHidden: true },
+        }),
+        vscode.window.registerWebviewViewProvider(StreamProvider.viewType, streamProvider, {
             webviewOptions: { retainContextWhenHidden: true },
         }),
         // Update external services when configurationChangeEvent is fired by chatProvider
@@ -217,18 +219,6 @@ const register = async (
             await configureEventsInfra(newConfig, isExtensionModeDevOrTest)
         })
     )
-
-
-    if (symfRunner) {
-        const searchViewProvider = new SearchViewProvider(context.extensionUri, symfRunner)
-        searchViewProvider.initialize()
-        disposables.push(searchViewProvider)
-        disposables.push(
-            vscode.window.registerWebviewViewProvider('cody.search', searchViewProvider, {
-                webviewOptions: { retainContextWhenHidden: true },
-            })
-        )
-    }
 
     if (symfRunner) {
         const searchViewProvider = new SearchViewProvider(context.extensionUri, symfRunner)
@@ -298,6 +288,12 @@ const register = async (
     const statusBar = createStatusBar()
 
     disposables.push(
+        vscode.commands.registerCommand('calicoColors.addColor', () => {
+			colorsViewProvider.addColor();
+		}),
+        vscode.commands.registerCommand('calicoColors.clearColors', () => {
+			colorsViewProvider.clearColors();
+		}),
         vscode.commands.registerCommand(
             'cody.command.edit-code',
             (
