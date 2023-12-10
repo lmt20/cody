@@ -44,9 +44,7 @@ import { createOrUpdateTelemetryRecorderProvider, telemetryRecorder } from './se
 import { workspaceActionsOnConfigChange } from './services/utils/workspace-action'
 import { TestSupport } from './test-support'
 import { parseAllVisibleDocuments, updateParseTreeOnEdit } from './tree-sitter/parse-tree-cache'
-import { ViewGroupsProvider } from './collab/webview-providers/ViewGroupsProvider'
-import { DirectMessageProvider } from './collab/webview-providers/DirectMessageProvider'
-import { StreamProvider } from './collab/webview-providers/StreamProvider'
+import Manager from './collab/manager'
 
 /**
  * Start the extension, watching all relevant configuration and secrets for changes.
@@ -185,26 +183,14 @@ const register = async (
         symfRunner || null
     )
 
-    disposables.push(new CodeActionProvider({ contextProvider }))
+    const manager = new Manager();
 
-    const viewGroupProvider = new ViewGroupsProvider(context.extensionUri)
-    const directMessageProvider = new DirectMessageProvider(context.extensionUri)
-    const streamProvider = new StreamProvider(context.extensionUri)
+    disposables.push(new CodeActionProvider({ contextProvider }))
 
     // Register tree views
     disposables.push(
         chatManager,
         vscode.window.registerWebviewViewProvider('cody.chat', chatManager.sidebarChat, {
-            webviewOptions: { retainContextWhenHidden: true },
-        }),
-
-        vscode.window.registerWebviewViewProvider(ViewGroupsProvider.viewType, viewGroupProvider, {
-            webviewOptions: { retainContextWhenHidden: true },
-        }),
-        vscode.window.registerWebviewViewProvider(DirectMessageProvider.viewType, directMessageProvider, {
-            webviewOptions: { retainContextWhenHidden: true },
-        }),
-        vscode.window.registerWebviewViewProvider(StreamProvider.viewType, streamProvider, {
             webviewOptions: { retainContextWhenHidden: true },
         }),
         // Update external services when configurationChangeEvent is fired by chatProvider

@@ -1,9 +1,9 @@
 {
-  "name": "cody-ai",
+  "name": "collab-ai",
   "private": true,
-  "displayName": "Cody AI",
+  "displayName": "Collab AI",
   "version": "0.18.0",
-  "publisher": "sourcegraph",
+  "publisher": "vietis",
   "license": "Apache-2.0",
   "icon": "resources/cody.png",
   "description": "Code AI with codebase context",
@@ -251,18 +251,15 @@
       ],
       "collab": [
         {
-          "type": "webview",
-          "id": "collab.view",
-          "name": "views"
+          "id": "collab.chatWorkspace.zulip",
+          "name": "Views"
         },
         {
-          "type": "webview",
-          "id": "collab.direct_messages",
+          "id": "collab.directMessages.zulip",
           "name": "Direct Messages"
         },
         {
-          "type": "webview",
-          "id": "collab.stream",
+          "id": "collab.stream.zulip",
           "name": "Streams"
         }
       ]
