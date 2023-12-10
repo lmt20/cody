@@ -252,11 +252,6 @@
       "collab": [
         {
           "type": "webview",
-          "id": "calicoColors.colorsView",
-          "name": "Collors View"
-        },
-        {
-          "type": "webview",
           "id": "collab.view",
           "name": "views"
         },
@@ -280,17 +275,6 @@
       }
     ],
     "commands": [
-      {
-        "command": "calicoColors.addColor",
-        "category": "Calico Colors",
-        "title": "Add Color"
-      },
-      {
-        "command": "calicoColors.clearColors",
-        "category": "Calico Colors",
-        "title": "Clear Colors",
-        "icon": "$(clear-all)"
-      },
       {
         "command": "cody.welcome",
         "title": "Help & Getting Started",

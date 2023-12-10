@@ -44,7 +44,6 @@ import { createOrUpdateTelemetryRecorderProvider, telemetryRecorder } from './se
 import { workspaceActionsOnConfigChange } from './services/utils/workspace-action'
 import { TestSupport } from './test-support'
 import { parseAllVisibleDocuments, updateParseTreeOnEdit } from './tree-sitter/parse-tree-cache'
-import { ColorsViewProvider } from './collab/webview-providers/ColorsViewProvider'
 import { ViewGroupsProvider } from './collab/webview-providers/ViewGroupsProvider'
 import { DirectMessageProvider } from './collab/webview-providers/DirectMessageProvider'
 import { StreamProvider } from './collab/webview-providers/StreamProvider'
@@ -188,7 +187,6 @@ const register = async (
 
     disposables.push(new CodeActionProvider({ contextProvider }))
 
-    const colorsViewProvider = new ColorsViewProvider(context.extensionUri)
     const viewGroupProvider = new ViewGroupsProvider(context.extensionUri)
     const directMessageProvider = new DirectMessageProvider(context.extensionUri)
     const streamProvider = new StreamProvider(context.extensionUri)
@@ -200,9 +198,6 @@ const register = async (
             webviewOptions: { retainContextWhenHidden: true },
         }),
 
-        vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, colorsViewProvider, {
-            webviewOptions: { retainContextWhenHidden: true },
-        }),
         vscode.window.registerWebviewViewProvider(ViewGroupsProvider.viewType, viewGroupProvider, {
             webviewOptions: { retainContextWhenHidden: true },
         }),
@@ -288,12 +283,6 @@ const register = async (
     const statusBar = createStatusBar()
 
     disposables.push(
-        vscode.commands.registerCommand('calicoColors.addColor', () => {
-			colorsViewProvider.addColor();
-		}),
-        vscode.commands.registerCommand('calicoColors.clearColors', () => {
-			colorsViewProvider.clearColors();
-		}),
         vscode.commands.registerCommand(
             'cody.command.edit-code',
             (
